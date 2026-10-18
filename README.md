@@ -72,7 +72,7 @@ The `gmail.modify` scope reads and modifies mail (labels, archive, star, mark re
 npm test
 ```
 
-Runs the stdio smoke test: it spawns the built server, performs the MCP handshake, and asserts all 8 tools plus the unconfigured-credentials error paths (also run by CI on every PR).
+Runs both smoke tests: the stdio one (MCP handshake, all 8 tools, unconfigured-credentials error paths) and the HTTP one (initialize, session id, `tools/list` over Streamable HTTP). CI runs them on every PR.
 
 For an interactive session with the official inspector:
 
@@ -99,7 +99,24 @@ OpenWork reads `opencode.json`, so add the server to your workspace config:
 
 `cwd` matters: the server loads `.env` from it. Rebuild (`npm run build`) after code changes; OpenWork starts the server on demand.
 
-(If you ever host it remotely, the **Settings → Library → Add workspace MCP** UI takes a server URL instead.)
+## Use with any AI client
+
+Same tools, two transports:
+
+| Transport | How it starts | Connect from |
+| --- | --- | --- |
+| **stdio** (default) | the client spawns `node dist/index.js` itself and speaks MCP (JSON-RPC) over the process's stdin/stdout | any client that can run a local command: Claude Desktop, Cursor, VS Code, Codex, OpenCode |
+| **Streamable HTTP** | `npm run start:http` → `http://127.0.0.1:3000/mcp` | any client that connects by URL: MCP Inspector, OpenWork (**Settings → Library → Add workspace MCP**), web-based agents |
+
+```sh
+npm run start:http          # PORT=3000 by default
+PORT=8080 npm run start:http
+HOST=0.0.0.0 npm run start:http   # listen on all interfaces (see warning below)
+```
+
+stdio needs no port or network — that is what "speaks MCP over stdio" means: the client owns the process, messages travel over the pipes. HTTP lets a client that never spawns processes reach the same server by URL.
+
+> **Warning**: the HTTP endpoint has **no authentication** and binds `127.0.0.1` only. Do not expose it to the network without putting auth in front of it (reverse proxy, VPN, or tunnel).
 
 Then create the Automations — daily, morning and at 5pm (e.g. 7:00 and 17:00 in your timezone), same prompt:
 
