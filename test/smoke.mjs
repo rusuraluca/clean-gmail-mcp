@@ -5,6 +5,17 @@ import { fileURLToPath } from "node:url";
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const server = spawn("node", [path.join(repo, "dist", "index.js")], {
   cwd: repo,
+  // Scrub credentials so the error-path assertions stay hermetic even with a configured .env.
+  // dotenv does not override existing process env, so empty strings mask the file values.
+  env: {
+    ...process.env,
+    SLACK_BOT_TOKEN: "",
+    SLACK_DEFAULT_CHANNEL: "",
+    GOOGLE_CLIENT_ID: "",
+    GOOGLE_CLIENT_SECRET: "",
+    GOOGLE_REFRESH_TOKEN: "",
+    GOOGLE_TOKEN_FILE: path.join(repo, ".tokens", "no-such-token.json"),
+  },
   stdio: ["pipe", "pipe", "inherit"],
 });
 
