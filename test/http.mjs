@@ -74,7 +74,7 @@ if (initRes.status !== 200) fail(`initialize HTTP ${initRes.status}`, child);
 const sessionId = initRes.headers.get("mcp-session-id");
 if (!sessionId) fail("initialize response has no Mcp-Session-Id header", child);
 const init = parseBody(await initRes.text());
-if (init.result?.serverInfo?.name !== "clean-gmail-mcp") fail("initialize serverInfo", child);
+if (init.result?.serverInfo?.name !== "gmini") fail("initialize serverInfo", child);
 console.log("initialize ok, session:", sessionId);
 
 const sessionHeaders = { ...headers, "mcp-session-id": sessionId };
