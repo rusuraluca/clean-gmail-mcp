@@ -1,0 +1,27 @@
+{
+  "name": "morning-inbox-mcp",
+  "version": "0.1.0",
+  "description": "MCP server that gives an AI agent Gmail triage tools and a Slack summary relay for an automated morning inbox routine.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "morning-inbox-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "typescript": "^5.9.0"
+  }
+}
