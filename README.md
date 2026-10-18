@@ -29,3 +29,11 @@ npm run auth:google
 ```
 
 The `gmail.modify` scope reads and modifies mail (labels, archive, star, mark read) but cannot permanently delete anything.
+
+## Slack setup (one-time)
+
+1. [api.slack.com/apps](https://api.slack.com/apps) → **Create New App → From scratch**.
+2. **OAuth & Permissions → Bot Token Scopes**: `chat:write`, `channels:read`, `groups:read`, `im:write`.
+3. **Install to Workspace** → copy the **Bot User OAuth Token** (`xoxb-...`) into `.env`.
+4. Invite the bot where it should post: `/invite @your-app-name` (private channels too).
+5. Optional: set `SLACK_DEFAULT_CHANNEL=#inbox-brief` in `.env`.
