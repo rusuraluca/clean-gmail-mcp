@@ -3,6 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import * as gmail from "./gmail.js";
+import * as slack from "./slack.js";
 
 const server = new McpServer({
   name: "morning-inbox-mcp",
@@ -176,6 +177,31 @@ server.registerTool(
   async () => {
     try {
       return ok(await gmail.listLabels());
+    } catch (err) {
+      return fail(err);
+    }
+  },
+);
+
+server.registerTool(
+  "slack_send_message",
+  {
+    title: "Send a Slack message",
+    description:
+      "Post a message to a Slack channel, or to a user id for a DM. " +
+      "Uses Slack mrkdwn formatting (*bold*, _italic_, > quote, • bullet). " +
+      "channel defaults to SLACK_DEFAULT_CHANNEL when omitted.",
+    inputSchema: {
+      text: z.string().min(1).max(39000).describe("Message text, Slack mrkdwn allowed."),
+      channel: z
+        .string()
+        .optional()
+        .describe("Target: '#channel-name', 'C0123456789', or a user id for a DM."),
+    },
+  },
+  async ({ text, channel }) => {
+    try {
+      return ok(await slack.sendSlackMessage({ text, channel }));
     } catch (err) {
       return fail(err);
     }

@@ -46,3 +46,18 @@ export function getGoogleCredentials(): GoogleCredentials {
 
   return { clientId, clientSecret, refreshToken } as GoogleCredentials;
 }
+
+export function getSlackToken(): string {
+  const token = process.env.SLACK_BOT_TOKEN;
+  if (!token) {
+    throw new Error(
+      "Slack is not configured. Missing: SLACK_BOT_TOKEN. " +
+        `Copy .env.example to .env and see the README "Slack setup" section.`,
+    );
+  }
+  return token;
+}
+
+export function getDefaultSlackChannel(): string | undefined {
+  return process.env.SLACK_DEFAULT_CHANNEL || undefined;
+}
