@@ -89,6 +89,99 @@ server.registerTool(
   },
 );
 
+server.registerTool(
+  "gmail_archive",
+  {
+    title: "Archive Gmail messages",
+    description:
+      "Archive messages by removing the INBOX label. Messages are kept, never deleted. " +
+      "Use for newsletters, promotions, notifications and other noise after triage.",
+    inputSchema: {
+      ids: z.array(z.string()).min(1).max(500).describe("Message ids to archive."),
+    },
+  },
+  async ({ ids }) => {
+    try {
+      return ok(await gmail.archiveMessages(ids));
+    } catch (err) {
+      return fail(err);
+    }
+  },
+);
+
+server.registerTool(
+  "gmail_mark_read",
+  {
+    title: "Mark Gmail messages as read",
+    description: "Remove the UNREAD label from the given messages.",
+    inputSchema: {
+      ids: z.array(z.string()).min(1).max(500).describe("Message ids to mark as read."),
+    },
+  },
+  async ({ ids }) => {
+    try {
+      return ok(await gmail.markRead(ids));
+    } catch (err) {
+      return fail(err);
+    }
+  },
+);
+
+server.registerTool(
+  "gmail_star",
+  {
+    title: "Star Gmail messages",
+    description: "Add the STARRED label to the given messages. Use for urgent or action-needed mail.",
+    inputSchema: {
+      ids: z.array(z.string()).min(1).max(500).describe("Message ids to star."),
+    },
+  },
+  async ({ ids }) => {
+    try {
+      return ok(await gmail.starMessages(ids));
+    } catch (err) {
+      return fail(err);
+    }
+  },
+);
+
+server.registerTool(
+  "gmail_apply_label",
+  {
+    title: "Apply a Gmail label",
+    description:
+      "Apply a label to the given messages. The label is created if it does not exist yet " +
+      "(e.g. 'Newsletters', 'Receipts', 'To Review').",
+    inputSchema: {
+      ids: z.array(z.string()).min(1).max(500).describe("Message ids to label."),
+      label: z.string().min(1).max(200).describe("Label name, e.g. 'Receipts'."),
+    },
+  },
+  async ({ ids, label }) => {
+    try {
+      return ok(await gmail.applyLabel({ ids, label }));
+    } catch (err) {
+      return fail(err);
+    }
+  },
+);
+
+server.registerTool(
+  "gmail_list_labels",
+  {
+    title: "List Gmail labels",
+    description: "List all Gmail labels (system and custom) with their ids.",
+    inputSchema: {},
+  },
+  async () => {
+    try {
+      return ok(await gmail.listLabels());
+    } catch (err) {
+      return fail(err);
+    }
+  },
+);
+
 const transport = new StdioServerTransport();
 await server.connect(transport);
 console.error("morning-inbox-mcp ready (stdio)");
