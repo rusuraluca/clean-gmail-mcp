@@ -3,12 +3,12 @@
 An [MCP](https://modelcontextprotocol.io) server that gives an AI agent the hands it needs for a daily inbox routine:
 
 - **Gmail**: fetch recent mail, read full messages, archive noise, star urgent, label, mark read
-- **Slack**: post the morning summary to a channel or DM
+- **Slack**: post the summary in four sections — *To reply*, *Important*, *Top news*, *Clean up summary* — to a channel or DM
 
 The agent (OpenWork + a scheduled Automation) is the **brain**: it decides what's noise, what's urgent, and how to word the summary. This server only exposes clean, single-purpose **mechanisms**.
 
 ```
-OpenWork Automation (daily, 7:00 Europe/Bucharest)
+OpenWork Automation (daily, 7:00 + 17:00 Europe/Bucharest)
   └─ agent reasons over tool results
        ├─ gmail_fetch_recent ──► Gmail API
        ├─ gmail_archive / gmail_star / gmail_apply_label ──► Gmail API
@@ -101,13 +101,13 @@ OpenWork reads `opencode.json`, so add the server to your workspace config:
 
 (If you ever host it remotely, the **Settings → Library → Add workspace MCP** UI takes a server URL instead.)
 
-Then create the morning Automation: **daily schedule in your timezone**, with a prompt like:
+Then create the Automations — daily, morning and at 5pm (e.g. 7:00 and 17:00 in your timezone), same prompt:
 
-> Run my morning inbox routine using the clean-gmail-mcp tools.
+> Run my inbox routine using the clean-gmail-mcp tools.
 >
 > 1. `gmail_fetch_recent` with hours=24. Read full bodies (`gmail_get_message`) only when the snippet is ambiguous.
 > 2. Triage: archive newsletters, promotions, marketing and automated notifications; mark the archived batch as read; label receipts as "Receipts"; star anything that needs a reply, has a deadline, or involves money.
-> 3. Compose a Slack summary in mrkdwn: *Needs you* (starred/action), *Heads up* (meetments, deadlines), *Stats* (X archived, Y kept). Two sentences max per item, one line per item. Skip anything trivial.
+> 3. Compose a Slack summary in mrkdwn with four sections: *To reply* (needs your answer), *Important* (deadlines, money, urgent), *Top news* (notable but not urgent), *Clean up summary* (X archived, Y kept). Two sentences max per item, one line per item. Skip anything trivial.
 > 4. `slack_send_message` the summary. Do not change labels or archive beyond step 2, and never trash messages.
 
 The first runs are the time to tune the prompt — tell the agent what it got wrong and edit the Automation.
