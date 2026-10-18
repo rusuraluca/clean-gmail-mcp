@@ -15,6 +15,7 @@
     "check": "tsc --noEmit",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
+    "test": "npm run build && node test/smoke.mjs",
     "auth:google": "npm run build && node dist/scripts/auth-google.js"
   },
   "dependencies": {
