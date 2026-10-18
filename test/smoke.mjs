@@ -86,6 +86,7 @@ const expected = [
   "gmail_star",
   "gmail_apply_label",
   "gmail_list_labels",
+  "calendar_fetch_today",
   "slack_send_message",
 ];
 const missing = expected.filter((n) => !names.includes(n));
@@ -105,6 +106,18 @@ console.log(
   gmailCall.result.isError,
   "| text:",
   JSON.stringify(gmailCall.result.content?.[0]?.text?.slice(0, 80)),
+);
+
+const calendarCall = await request("tools/call", {
+  name: "calendar_fetch_today",
+  arguments: {},
+});
+assert(calendarCall.result?.isError === true, "calendar tool without credentials returns isError");
+console.log(
+  "no-credentials calendar call -> isError:",
+  calendarCall.result.isError,
+  "| text:",
+  JSON.stringify(calendarCall.result.content?.[0]?.text?.slice(0, 80)),
 );
 
 const slackCall = await request("tools/call", {

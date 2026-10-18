@@ -1,8 +1,9 @@
 import { google } from "googleapis";
 import { getGoogleCredentials } from "./config.js";
 
-export const GMAIL_SCOPES = [
+export const GOOGLE_SCOPES = [
   "https://www.googleapis.com/auth/gmail.modify",
+  "https://www.googleapis.com/auth/calendar.readonly",
   "https://www.googleapis.com/auth/userinfo.email",
 ];
 

@@ -1,7 +1,7 @@
 {
   "name": "clean-gmail-mcp",
   "version": "0.1.0",
-  "description": "MCP server that gives an AI agent Gmail triage tools and a four-part Slack summary (to reply, important, top news, clean up summary) for an automated inbox routine.",
+  "description": "MCP server that gives an AI agent Gmail triage tools, a Google Calendar day view, and a five-section Slack summary (today, to reply, important, top news, clean up summary) for an automated inbox routine.",
   "license": "MIT",
   "type": "module",
   "engines": {

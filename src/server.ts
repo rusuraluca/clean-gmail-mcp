@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import * as calendar from "./calendar.js";
 import * as gmail from "./gmail.js";
 import * as slack from "./slack.js";
 
@@ -176,6 +177,38 @@ export function createServer(): McpServer {
     async () => {
       try {
         return ok(await gmail.listLabels());
+      } catch (err) {
+        return fail(err);
+      }
+    },
+  );
+
+  server.registerTool(
+    "calendar_fetch_today",
+    {
+      title: "Fetch today's calendar",
+      description:
+        "List Google Calendar events for one day on the primary calendar, ordered by start time. " +
+        "Returns title, start/end, all-day flag, location, Meet link and event link for each event. " +
+        "The day defaults to today in the CALENDAR_TIMEZONE setting (Europe/London by default).",
+      inputSchema: {
+        date: z
+          .string()
+          .regex(/^\d{4}-\d{2}-\d{2}$/)
+          .optional()
+          .describe("Day to fetch as YYYY-MM-DD (default: today in CALENDAR_TIMEZONE)."),
+        maxResults: z
+          .number()
+          .int()
+          .min(1)
+          .max(100)
+          .default(50)
+          .describe("Maximum events to return, ordered by start time (default 50)."),
+      },
+    },
+    async ({ date, maxResults }) => {
+      try {
+        return ok(await calendar.fetchToday({ date, maxResults }));
       } catch (err) {
         return fail(err);
       }
