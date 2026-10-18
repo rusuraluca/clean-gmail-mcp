@@ -1,4 +1,4 @@
-# clean-gmail-mcp
+# gmini
 
 An [MCP](https://modelcontextprotocol.io) server that gives an AI agent the hands it needs for a daily inbox routine:
 
@@ -40,8 +40,8 @@ OpenWork Automation (daily, 7:00 + 17:00 Europe/London)
 ## Setup
 
 ```sh
-git clone git@github.com:rusuraluca/clean-gmail-mcp.git
-cd clean-gmail-mcp
+git clone git@github.com:rusuraluca/gmini.git
+cd gmini
 npm install
 npm run build
 cp .env.example .env
@@ -90,10 +90,10 @@ OpenWork reads `opencode.json`, so add the server to your workspace config:
 ```json
 {
   "mcp": {
-    "clean-gmail-mcp": {
+    "gmini": {
       "type": "local",
       "command": ["node", "dist/index.js"],
-      "cwd": "/absolute/path/to/clean-gmail-mcp",
+      "cwd": "/absolute/path/to/gmini",
       "enabled": true
     }
   }
@@ -123,7 +123,7 @@ stdio needs no port or network — that is what "speaks MCP over stdio" means: t
 
 Then create the Automations — daily, morning and at 5pm (e.g. 7:00 and 17:00 in your timezone), same prompt:
 
-> Run my inbox routine using the clean-gmail-mcp tools.
+> Run my inbox routine using the gmini tools.
 >
 > 1. `calendar_fetch_today` for today's agenda. `gmail_fetch_recent` with hours=24. Read full bodies (`gmail_get_message`) only when the snippet is ambiguous.
 > 2. Triage: archive newsletters, promotions, marketing and automated notifications; mark the archived batch as read; label receipts as "Receipts"; star anything that needs a reply, has a deadline, or involves money.

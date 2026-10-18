@@ -21,7 +21,7 @@ function fail(err: unknown): ToolResult {
 
 export function createServer(): McpServer {
   const server = new McpServer({
-    name: "clean-gmail-mcp",
+    name: "gmini",
     version: "0.1.0",
   });
 

@@ -107,5 +107,5 @@ export async function startHttp(port: number): Promise<void> {
     httpServer.once("error", reject);
     httpServer.listen(port, host, () => resolve());
   });
-  console.error(`clean-gmail-mcp ready (http) -> http://${host}:${port}/mcp`);
+  console.error(`gmini ready (http) -> http://${host}:${port}/mcp`);
 }

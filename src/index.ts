@@ -15,5 +15,5 @@ if (process.argv.includes("--http")) {
   const server = createServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("clean-gmail-mcp ready (stdio)");
+  console.error("gmini ready (stdio)");
 }
