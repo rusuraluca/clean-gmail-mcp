@@ -1,5 +1,5 @@
 {
-  "name": "morning-inbox-mcp",
+  "name": "clean-gmail-mcp",
   "version": "0.1.0",
   "description": "MCP server that gives an AI agent Gmail triage tools and a Slack summary relay for an automated morning inbox routine.",
   "license": "MIT",
@@ -8,7 +8,7 @@
     "node": ">=20"
   },
   "bin": {
-    "morning-inbox-mcp": "dist/index.js"
+    "clean-gmail-mcp": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",

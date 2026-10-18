@@ -1,4 +1,4 @@
-# morning-inbox-mcp
+# clean-gmail-mcp
 
 An [MCP](https://modelcontextprotocol.io) server that gives an AI agent the hands it needs for a daily inbox routine:
 
@@ -37,8 +37,8 @@ OpenWork Automation (daily, 7:00 Europe/Bucharest)
 ## Setup
 
 ```sh
-git clone git@github.com:rusuraluca/morning-inbox-mcp.git
-cd morning-inbox-mcp
+git clone git@github.com:rusuraluca/clean-gmail-mcp.git
+cd clean-gmail-mcp
 npm install
 npm run build
 cp .env.example .env
@@ -87,10 +87,10 @@ OpenWork reads `opencode.json`, so add the server to your workspace config:
 ```json
 {
   "mcp": {
-    "morning-inbox": {
+    "clean-gmail-mcp": {
       "type": "local",
       "command": ["node", "dist/index.js"],
-      "cwd": "/absolute/path/to/morning-inbox-mcp",
+      "cwd": "/absolute/path/to/clean-gmail-mcp",
       "enabled": true
     }
   }
@@ -103,7 +103,7 @@ OpenWork reads `opencode.json`, so add the server to your workspace config:
 
 Then create the morning Automation: **daily schedule in your timezone**, with a prompt like:
 
-> Run my morning inbox routine using the morning-inbox tools.
+> Run my morning inbox routine using the clean-gmail-mcp tools.
 >
 > 1. `gmail_fetch_recent` with hours=24. Read full bodies (`gmail_get_message`) only when the snippet is ambiguous.
 > 2. Triage: archive newsletters, promotions, marketing and automated notifications; mark the archived batch as read; label receipts as "Receipts"; star anything that needs a reply, has a deadline, or involves money.

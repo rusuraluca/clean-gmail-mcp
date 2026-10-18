@@ -6,7 +6,7 @@ import * as gmail from "./gmail.js";
 import * as slack from "./slack.js";
 
 const server = new McpServer({
-  name: "morning-inbox-mcp",
+  name: "clean-gmail-mcp",
   version: "0.1.0",
 });
 
@@ -210,4 +210,4 @@ server.registerTool(
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
-console.error("morning-inbox-mcp ready (stdio)");
+console.error("clean-gmail-mcp ready (stdio)");
