@@ -6,7 +6,7 @@ import path from "node:path";
 import type { AddressInfo } from "node:net";
 import { google } from "googleapis";
 import { resolveGoogleTokenFile } from "../config.js";
-import { GMAIL_SCOPES } from "../google-auth.js";
+import { GOOGLE_SCOPES } from "../google-auth.js";
 
 const clientId = process.env.GOOGLE_CLIENT_ID;
 const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -42,11 +42,11 @@ const oauth2 = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
 const authUrl = oauth2.generateAuthUrl({
   access_type: "offline",
   prompt: "consent",
-  scope: GMAIL_SCOPES,
+  scope: GOOGLE_SCOPES,
   state,
 });
 
-console.error("\nAuthorize Gmail access in your browser:\n");
+console.error("\nAuthorize Google access (Gmail + Calendar) in your browser:\n");
 console.error(`  ${authUrl}\n`);
 console.error("Waiting for the redirect (this local server exits after one callback)...\n");
 openBrowser(authUrl);
@@ -110,7 +110,7 @@ server.on("request", (req, res) => {
           {
             refresh_token: tokens.refresh_token,
             client_id: clientId,
-            scope: GMAIL_SCOPES.join(" "),
+            scope: GOOGLE_SCOPES.join(" "),
             obtained_at: new Date().toISOString(),
           },
           null,

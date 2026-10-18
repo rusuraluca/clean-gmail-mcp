@@ -102,6 +102,7 @@ const expected = [
   "gmail_star",
   "gmail_apply_label",
   "gmail_list_labels",
+  "calendar_fetch_today",
   "slack_send_message",
 ];
 const missing = expected.filter((name) => !names.includes(name));

@@ -61,3 +61,7 @@ export function getSlackToken(): string {
 export function getDefaultSlackChannel(): string | undefined {
   return process.env.SLACK_DEFAULT_CHANNEL || undefined;
 }
+
+export function getCalendarTimezone(): string {
+  return process.env.CALENDAR_TIMEZONE || "Europe/London";
+}
