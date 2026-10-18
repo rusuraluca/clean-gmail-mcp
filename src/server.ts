@@ -23,6 +23,7 @@ export function createServer(): McpServer {
   const server = new McpServer({
     name: "gmini",
     version: "0.1.0",
+    description: "Gmail triage, Google Calendar day view, and Slack summary tools.",
   });
 
   server.registerTool(
