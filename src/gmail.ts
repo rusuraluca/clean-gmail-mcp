@@ -170,3 +170,80 @@ export async function getMessage(params: {
     hadAttachment,
   };
 }
+
+const MODIFY_CHUNK = 100;
+
+async function batchModify(ids: string[], addLabelIds: string[], removeLabelIds: string[]): Promise<{ updated: number }> {
+  if (ids.length === 0) throw new Error("No message ids provided.");
+  const gmail = gmailClient();
+  for (let i = 0; i < ids.length; i += MODIFY_CHUNK) {
+    const chunk = ids.slice(i, i + MODIFY_CHUNK);
+    await gmail.users.messages.batchModify({
+      userId: "me",
+      requestBody: {
+        ids: chunk,
+        addLabelIds,
+        removeLabelIds,
+      },
+    });
+  }
+  return { updated: ids.length };
+}
+
+export function archiveMessages(ids: string[]): Promise<{ updated: number }> {
+  return batchModify(ids, [], ["INBOX"]);
+}
+
+export function markRead(ids: string[]): Promise<{ updated: number }> {
+  return batchModify(ids, [], ["UNREAD"]);
+}
+
+export function starMessages(ids: string[]): Promise<{ updated: number }> {
+  return batchModify(ids, ["STARRED"], []);
+}
+
+export async function applyLabel(params: { ids: string[]; label: string }): Promise<{
+  updated: number;
+  labelId: string;
+  labelName: string;
+  created: boolean;
+}> {
+  const { ids, label } = params;
+  if (ids.length === 0) throw new Error("No message ids provided.");
+  const gmail = gmailClient();
+
+  const listed = await gmail.users.labels.list({ userId: "me" });
+  const labels = listed.data.labels ?? [];
+  let match = labels.find((l) => l.id === label || l.name?.toLowerCase() === label.toLowerCase());
+  let created = false;
+
+  if (!match) {
+    const createdLabel = await gmail.users.labels.create({
+      userId: "me",
+      requestBody: { name: label },
+    });
+    match = createdLabel.data;
+    created = true;
+  }
+
+  if (!match?.id) throw new Error(`Could not resolve Gmail label "${label}".`);
+
+  await batchModify(ids, [match.id], []);
+  return { updated: ids.length, labelId: match.id, labelName: match.name ?? label, created };
+}
+
+export async function listLabels(): Promise<{
+  labels: { id: string; name: string; type: string; messagesTotal: number }[];
+}> {
+  const gmail = gmailClient();
+  const listed = await gmail.users.labels.list({ userId: "me" });
+  const labels = (listed.data.labels ?? [])
+    .filter((l) => l.id && l.name)
+    .map((l) => ({
+      id: l.id as string,
+      name: l.name as string,
+      type: l.type ?? "",
+      messagesTotal: l.messagesTotal ?? 0,
+    }));
+  return { labels };
+}
