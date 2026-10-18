@@ -15,3 +15,17 @@ npm start
 ```
 
 The server speaks MCP over stdio — it waits for a client such as OpenWork to connect.
+
+## Google setup (one-time)
+
+1. Open [Google Cloud Console](https://console.cloud.google.com/) → create a project.
+2. **APIs & Services → Library** → enable **Gmail API**.
+3. **APIs & Services → OAuth consent screen** → External → add scope `https://www.googleapis.com/auth/gmail.modify` → add your own Gmail address as a **test user**.
+4. **APIs & Services → Credentials → Create credentials → OAuth client ID → Desktop app** → copy the client ID and secret into `.env` (see `.env.example`).
+5. Exchange them for a refresh token (opens your browser, saves `.tokens/google-token.json`):
+
+```sh
+npm run auth:google
+```
+
+The `gmail.modify` scope reads and modifies mail (labels, archive, star, mark read) but cannot permanently delete anything.
