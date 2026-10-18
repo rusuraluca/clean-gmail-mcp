@@ -68,7 +68,7 @@ const init = await request("initialize", {
   clientInfo: { name: "smoke-test", version: "0.0.1" },
 });
 
-assert(init.result?.serverInfo?.name === "morning-inbox-mcp", "initialize returns serverInfo");
+assert(init.result?.serverInfo?.name === "clean-gmail-mcp", "initialize returns serverInfo");
 console.log("initialize ok:", init.result.serverInfo);
 
 notify("notifications/initialized", {});
