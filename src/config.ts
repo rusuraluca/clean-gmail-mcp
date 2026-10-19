@@ -98,6 +98,14 @@ export function getOpenworkOAuthPort(): number {
   return Number(process.env.OPENWORK_OAUTH_PORT || 34567);
 }
 
+export function getOpenworkSessionTarget(): "cloud" | "desktop" {
+  const target = process.env.OPENWORK_SESSION_TARGET || "cloud";
+  if (target !== "cloud" && target !== "desktop") {
+    throw new Error(`OPENWORK_SESSION_TARGET must be "cloud" or "desktop", got: ${target}`);
+  }
+  return target;
+}
+
 export function resolveOpenworkTokenFile(): string {
   if (process.env.OPENWORK_TOKEN_FILE) return path.resolve(process.env.OPENWORK_TOKEN_FILE);
   return path.join(packageRoot, ".tokens", "openwork-mcp.json");
