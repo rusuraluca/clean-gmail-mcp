@@ -142,7 +142,8 @@ Automation prompt (daily, 7:00 and 17:00):
 | `src/http.ts` | Streamable HTTP transport |
 | `src/index.ts` | Entry point: stdio, `--http`, or `--slack` |
 | `src/openwork.ts` | OpenWork gateway client: OAuth, cloud sessions |
-| `src/slack-listener.ts` | Socket Mode bridge, event guardrails, replies |
+| `src/slack-events.ts` | Event filtering, mention stripping, guardrail prompt |
+| `src/slack-listener.ts` | Socket Mode bridge, replies |
 | `src/google-auth.ts` | OAuth scopes and client |
 | `src/scripts/auth-google.ts` | One-time browser consent flow |
 | `test/` | Smoke tests (stdio + HTTP) and bridge unit tests |

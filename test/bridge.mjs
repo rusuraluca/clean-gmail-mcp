@@ -4,7 +4,7 @@ import {
   shouldHandleEvent,
   stripMention,
   truncateAnswer,
-} from "../dist/slack-listener.js";
+} from "../dist/slack-events.js";
 
 function assert(condition, message) {
   if (!condition) {
