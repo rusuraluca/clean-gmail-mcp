@@ -65,3 +65,40 @@ export function getDefaultSlackChannel(): string | undefined {
 export function getCalendarTimezone(): string {
   return process.env.CALENDAR_TIMEZONE || "Europe/London";
 }
+
+export function getSlackSocketToken(): string {
+  const token = process.env.SLACK_SOCKET_TOKEN;
+  if (!token) {
+    throw new Error(
+      "Slack listener is not configured. Missing: SLACK_SOCKET_TOKEN. " +
+        `Enable Socket Mode on your Slack app, generate an xapp token, ` +
+        `and see the README "Slack listener" section.`,
+    );
+  }
+  return token;
+}
+
+export function getSlackAllowedUser(): string {
+  const user = process.env.SLACK_ALLOWED_USER;
+  if (!user) {
+    throw new Error(
+      "Slack listener is not configured. Missing: SLACK_ALLOWED_USER. " +
+        `Set it to your Slack user id so only you can drive the bridge, ` +
+        `and see the README "Slack listener" section.`,
+    );
+  }
+  return user;
+}
+
+export function getOpenworkGatewayUrl(): string {
+  return process.env.OPENWORK_GATEWAY_URL || "https://api.openworklabs.com/mcp/agent";
+}
+
+export function getOpenworkOAuthPort(): number {
+  return Number(process.env.OPENWORK_OAUTH_PORT || 34567);
+}
+
+export function resolveOpenworkTokenFile(): string {
+  if (process.env.OPENWORK_TOKEN_FILE) return path.resolve(process.env.OPENWORK_TOKEN_FILE);
+  return path.join(packageRoot, ".tokens", "openwork-mcp.json");
+}

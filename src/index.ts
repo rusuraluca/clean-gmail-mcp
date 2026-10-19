@@ -11,6 +11,14 @@ if (process.argv.includes("--http")) {
     console.error(`failed to start http transport on port ${port}:`, err);
     process.exit(1);
   }
+} else if (process.argv.includes("--slack")) {
+  const { startSlackListener } = await import("./slack-listener.js");
+  try {
+    await startSlackListener();
+  } catch (err) {
+    console.error("failed to start slack listener:", err);
+    process.exit(1);
+  }
 } else {
   const server = createServer();
   const transport = new StdioServerTransport();
