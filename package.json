@@ -16,11 +16,13 @@
     "dev": "tsc --watch",
     "start": "node dist/index.js",
     "start:http": "npm run build && node dist/index.js --http",
-    "test": "npm run build && node test/smoke.mjs && node test/http.mjs",
+    "start:slack": "npm run build && node dist/index.js --slack",
+    "test": "npm run build && node test/smoke.mjs && node test/http.mjs && node test/bridge.mjs",
     "auth:google": "npm run build && node dist/scripts/auth-google.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",
+    "@slack/socket-mode": "^3.1.0",
     "@slack/web-api": "^8.2.0",
     "dotenv": "^18.0.8",
     "googleapis": "^186.0.0",

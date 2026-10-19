@@ -61,6 +61,26 @@ Scopes: `gmail.modify` (cannot delete or send), `calendar.readonly`, `userinfo.e
 3. Install to Workspace → Bot User OAuth Token (`xoxb-...`) into `.env`.
 4. Optional in `.env`: `SLACK_DEFAULT_CHANNEL` (`#channel`, `C0123456789`, or user id for a DM), `CALENDAR_TIMEZONE` (default `Europe/London`).
 
+### Slack listener (OpenWork bridge)
+
+`npm run start:slack` turns your Gmini app into a two-way bridge: mentions and DMs become OpenWork Cloud agent sessions, and the answer is posted back in the same thread with a confirmation of every action taken.
+
+```mermaid
+flowchart LR
+  S["@Gmini or DM"] --> B["bridge (Socket Mode)"]
+  B --> O["OpenWork gateway"]
+  O --> C["Cloud agent session"]
+  C --> S
+```
+
+1. Slack app → **Socket Mode** → enable → generate an app-level token (`xapp-...`).
+2. **Bot Token Scopes**: add `app_mentions:read`, `im:history`.
+3. **Event Subscriptions** → Subscribe to bot events: `app_mention`, `message.im` → reinstall the app.
+4. `.env`: `SLACK_SOCKET_TOKEN` (`xapp-...`), `SLACK_ALLOWED_USER` (your user id — the bridge refuses everyone else).
+5. `npm run start:slack` — first run opens a browser to sign in to OpenWork once (token cached in `.tokens/openwork-mcp.json`, `0600`).
+
+Notes: only `SLACK_ALLOWED_USER` can drive the bridge. Each ask runs one OpenWork Cloud session (uses your OpenWork model quota). The bridge never talks to your LLM provider directly — it hands the prompt to OpenWork and posts back the final text. Trashing mail from Slack uses OpenWork's own Gmail trash tool with its confirmation gate; permanent deletion stays impossible.
+
 ## Test
 
 ```bash
@@ -71,6 +91,7 @@ Builds, then runs two smoke tests:
 
 - stdio: handshake, all 9 tools, credential error paths (hermetic — credentials are scrubbed even with a configured `.env`)
 - HTTP: initialize, session id, `tools/list`, bogus session → 404, wrong path → 404
+- bridge: event filtering, mention stripping, prompt guardrails (no network)
 
 CI runs both on every PR.
 
@@ -80,6 +101,7 @@ CI runs both on every PR.
 | --- | --- | --- |
 | stdio | the client spawns `node dist/index.js` | process pipes |
 | Streamable HTTP | `npm run start:http` | `http://127.0.0.1:3000/mcp` |
+| Slack listener | `npm run start:slack` | your Gmini DM / mentions |
 
 `PORT` and `HOST` override the HTTP defaults (`3000`, `127.0.0.1`). The HTTP endpoint has no authentication — do not expose it to a network.
 
@@ -118,10 +140,12 @@ Automation prompt (daily, 7:00 and 17:00):
 | `src/calendar.ts` | Calendar API, day bounds in `CALENDAR_TIMEZONE` |
 | `src/slack.ts` | Slack posts, channel and DM resolution |
 | `src/http.ts` | Streamable HTTP transport |
-| `src/index.ts` | Entry point: stdio, or `--http` |
+| `src/index.ts` | Entry point: stdio, `--http`, or `--slack` |
+| `src/openwork.ts` | OpenWork gateway client: OAuth, cloud sessions |
+| `src/slack-listener.ts` | Socket Mode bridge, event guardrails, replies |
 | `src/google-auth.ts` | OAuth scopes and client |
 | `src/scripts/auth-google.ts` | One-time browser consent flow |
-| `test/` | Smoke tests (stdio + HTTP) |
+| `test/` | Smoke tests (stdio + HTTP) and bridge unit tests |
 
 ## Security
 
