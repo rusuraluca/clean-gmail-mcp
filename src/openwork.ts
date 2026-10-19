@@ -196,14 +196,18 @@ export class OpenworkBridge {
   async connect(): Promise<void> {
     const provider = new OpenworkOAuthProvider(getOpenworkOAuthPort());
     const url = new URL(getOpenworkGatewayUrl());
-    const transport = new StreamableHTTPClientTransport(url, { authProvider: provider });
-    const client = new Client({ name: "gmini-slack-bridge", version: "0.1.0" });
+    const makeTransport = () => new StreamableHTTPClientTransport(url, { authProvider: provider });
+    const makeClient = () => new Client({ name: "gmini-slack-bridge", version: "0.1.0" });
+    let transport = makeTransport();
+    let client = makeClient();
     try {
       await client.connect(transport);
     } catch (err) {
       if (!(err instanceof UnauthorizedError)) throw err;
       const code = await provider.waitForCode();
       await transport.finishAuth(code);
+      transport = makeTransport();
+      client = makeClient();
       await client.connect(transport);
     }
     const tools = await client.listTools();
