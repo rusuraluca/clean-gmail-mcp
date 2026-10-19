@@ -50,8 +50,10 @@ export async function handleSlackEvent(event: SlackEvent, deps: HandlerDeps): Pr
   if (!statusTs) return;
 
   const title = `Gmini Slack: ${request.slice(0, 60)}`;
+  console.error(`handling request in ${channel}/${threadTs}: ${request.slice(0, 120)}`);
   try {
-    const result = await bridge.askCloud(buildPrompt(request), title);
+    const result = await bridge.ask(buildPrompt(request), title);
+    console.error(`session ${result.sessionId ?? "?"} -> ${result.status}`);
     await web.chat.update({
       channel,
       ts: statusTs,
@@ -59,6 +61,7 @@ export async function handleSlackEvent(event: SlackEvent, deps: HandlerDeps): Pr
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
+    console.error("ask failed:", message);
     await web.chat.update({
       channel,
       ts: statusTs,

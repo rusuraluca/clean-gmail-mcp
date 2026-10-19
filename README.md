@@ -79,7 +79,7 @@ flowchart LR
 4. `.env`: `SLACK_SOCKET_TOKEN` (`xapp-...`), `SLACK_ALLOWED_USER` (your user id — the bridge refuses everyone else).
 5. `npm run start:slack` — first run opens a browser to sign in to OpenWork once (token cached in `.tokens/openwork-mcp.json`, `0600`).
 
-Notes: only `SLACK_ALLOWED_USER` can drive the bridge. Each ask runs one OpenWork Cloud session (uses your OpenWork model quota). The bridge never talks to your LLM provider directly — it hands the prompt to OpenWork and posts back the final text. Trashing mail from Slack uses OpenWork's own Gmail trash tool with its confirmation gate; permanent deletion stays impossible.
+Notes: only `SLACK_ALLOWED_USER` can drive the bridge. Each ask runs one OpenWork agent session (uses your model quota). Session target comes from `OPENWORK_SESSION_TARGET`: `desktop` (default suggestion — runs in your signed-in OpenWork Desktop, which must be open) or `cloud` (needs an OpenWork Web subscription). The bridge never talks to your LLM provider directly — it hands the prompt to OpenWork and posts back the final text. Trashing mail from Slack uses OpenWork's own Gmail trash tool with its confirmation gate; permanent deletion stays impossible.
 
 ## Test
 

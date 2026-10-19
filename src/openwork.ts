@@ -13,7 +13,7 @@ import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "n
 import { createServer, type Server as HttpServer } from "node:http";
 import path from "node:path";
 import { promisify } from "node:util";
-import { getOpenworkGatewayUrl, getOpenworkOAuthPort, resolveOpenworkTokenFile } from "./config.js";
+import { getOpenworkGatewayUrl, getOpenworkOAuthPort, getOpenworkSessionTarget, resolveOpenworkTokenFile } from "./config.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -221,45 +221,50 @@ export class OpenworkBridge {
     console.error(`openwork gateway connected (${this.executeToolName})`);
   }
 
-  async askCloud(prompt: string, title: string): Promise<CloudSessionResult> {
-    const created = await this.execute("remote-session:create", { target: "cloud", title, prompt });
+  async ask(prompt: string, title: string): Promise<CloudSessionResult> {
+    const target = getOpenworkSessionTarget();
+    const created = await this.execute("remote-session:create", { target, title, prompt });
     const parsedCreate = parseGatewayResult(created);
     const sessionId = findStringField(parsedCreate, "sessionId");
-    if (!sessionId) {
+    const commandId = findStringField(parsedCreate, "commandId");
+    if (!sessionId && !commandId) {
       return { status: "error", text: `OpenWork did not return a session id: ${summarize(parsedCreate)}` };
     }
     const retryAfterMs = findNumberField(parsedCreate, "retryAfterMs");
     if (retryAfterMs) await sleep(retryAfterMs);
+    const label = sessionId ?? commandId ?? "";
 
     for (let attempt = 0; attempt < MAX_POLLS; attempt++) {
       await sleep(POLL_INTERVAL_MS);
-      const read = await this.execute("remote-session:read", { sessionId });
+      const body = sessionId ? { sessionId } : { commandId };
+      const read = await this.execute("remote-session:read", body);
       const parsedRead = parseGatewayResult(read);
       const session = findSessionBlock(parsedRead);
       if (!session) continue;
       const status = findStringField(session, "status");
       if (status === "idle") {
-        return { status: "idle", text: findStringField(session, "finalText") ?? "", sessionId };
+        return { status: "idle", text: findStringField(session, "finalText") ?? "", sessionId: label };
       }
       if (status === "error") {
         return {
           status: "error",
           text: findStringField(session, "lastError") ?? "OpenWork session failed.",
-          sessionId,
+          sessionId: label,
         };
       }
       if (status === "waiting") {
         return {
           status: "waiting",
-          text: "The OpenWork session is waiting for approval. Finish it in OpenWork Web, then ask again.",
-          sessionId,
+          text: "The OpenWork session is waiting for approval. Finish it in OpenWork, then ask again.",
+          sessionId: label,
         };
       }
     }
+    const where = target === "desktop" ? "OpenWork Desktop" : "OpenWork Web";
     return {
       status: "timeout",
-      text: `Still running in OpenWork Web (session ${sessionId}). It will finish there; ask again later for the answer.`,
-      sessionId,
+      text: `Still running in ${where} (session ${label}). It will finish there; ask again later for the answer.`,
+      sessionId: label,
     };
   }
 
